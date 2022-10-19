@@ -3,7 +3,7 @@
   <q-page padding>
     <!-- content -->
     <h3 class="tw-underline">Your Todos</h3>
-    <q-form @submit="onSubmit" ref="form">
+    <q-form @submit="onSubmit" ref="form" class="q-mb-md">
       <div class="row">
         <div class="col">
           <q-input
@@ -58,6 +58,7 @@ export default defineComponent({
           tasks.push({
             id: id++,
             content: task.value,
+            done: false
           });
           task.value = null;
           form.value?.resetValidation();
