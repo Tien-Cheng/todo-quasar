@@ -28,7 +28,9 @@
         </div>
       </q-item-section>
     </q-item>
-    <q-item-label v-if="completedTasks.length > 0" header>Completed Tasks</q-item-label>
+    <q-item-label v-if="completedTasks.length > 0" header
+      >Completed Tasks</q-item-label
+    >
     <q-item
       clickable
       v-ripple
@@ -62,12 +64,18 @@
       <q-card-section>
         <div class="text-h6">Edit Task</div>
         <q-form @submit="onEdit">
-          <q-input v-model="currentTask.content" label="Task"></q-input>
+          <q-input
+            v-model="currentTask.content"
+            label="Task"
+            lazy-rules
+            :rules="[
+              (val) => (val && val.length > 0) || 'Please type something',
+            ]"
+          ></q-input>
           <q-btn
             type="submit"
             label="Edit Task"
             color="primary"
-            v-close-popup
           ></q-btn>
         </q-form>
       </q-card-section>
@@ -106,6 +114,7 @@ export default defineComponent({
     function onEdit() {
       if (currentTask.content) {
         ctx.emit('editTask', currentTask);
+        edit.value = false;
       }
     }
     return {
