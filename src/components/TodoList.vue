@@ -4,7 +4,7 @@
     <q-item
       clickable
       v-ripple
-      v-for="task in remainingTasks"
+      v-for="task in taskStore.remainingTasks"
       :key="task.id"
       class="q-pa-md"
     >
@@ -23,18 +23,18 @@
             round
             color="negative"
             icon="delete"
-            @click="$emit('deleteTask', task.id)"
+            @click="taskStore.deleteTask(task.id)"
           ></q-btn>
         </div>
       </q-item-section>
     </q-item>
-    <q-item-label v-if="completedTasks.length > 0" header
+    <q-item-label v-if="taskStore.completedTasks.length > 0" header
       >Completed Tasks</q-item-label
     >
     <q-item
       clickable
       v-ripple
-      v-for="task in completedTasks"
+      v-for="task in taskStore.completedTasks"
       :key="task.id"
       class="q-pa-md"
     >
@@ -53,7 +53,7 @@
             round
             color="negative"
             icon="delete"
-            @click="$emit('deleteTask', task.id)"
+            @click="taskStore.deleteTask(task.id)"
           ></q-btn>
         </div>
       </q-item-section>
@@ -72,11 +72,7 @@
               (val) => (val && val.length > 0) || 'Please type something',
             ]"
           ></q-input>
-          <q-btn
-            type="submit"
-            label="Edit Task"
-            color="primary"
-          ></q-btn>
+          <q-btn type="submit" label="Edit Task" color="primary"></q-btn>
         </q-form>
       </q-card-section>
     </q-card>
@@ -84,8 +80,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, PropType, reactive, ref } from 'vue';
+import { defineComponent, PropType, reactive, ref } from 'vue';
 import { Todo } from './models';
+import { useTaskStore } from '../stores/taskStore';
 
 export default defineComponent({
   name: 'TodoList',
@@ -96,15 +93,10 @@ export default defineComponent({
     },
   },
   emits: ['editTask'],
-  setup(props, ctx) {
+  setup() {
+    const taskStore = useTaskStore();
     const edit = ref(false);
     const currentTask = reactive({} as Todo);
-    const completedTasks = computed(() => {
-      return props.tasks.filter((t) => t.done);
-    });
-    const remainingTasks = computed(() => {
-      return props.tasks.filter((t) => !t.done);
-    });
     function callEdit(content: string, id: number) {
       currentTask.content = content;
       currentTask.id = id;
@@ -113,13 +105,12 @@ export default defineComponent({
 
     function onEdit() {
       if (currentTask.content) {
-        ctx.emit('editTask', currentTask);
+        taskStore.editTask(currentTask);
         edit.value = false;
       }
     }
     return {
-      remainingTasks,
-      completedTasks,
+      taskStore,
       edit,
       currentTask,
       callEdit,

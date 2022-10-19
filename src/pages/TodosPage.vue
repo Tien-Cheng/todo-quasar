@@ -23,20 +23,15 @@
         </div>
       </div>
     </q-form>
-    <todo-list
-      :tasks="tasks"
-      class="q-mt-md"
-      @delete-task="deleteTask"
-      @edit-task="editTask"
-    ></todo-list>
+    <todo-list class="q-mt-md"></todo-list>
   </q-page>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, Ref } from 'vue';
-import { Todo } from 'src/components/models';
+import { defineComponent, ref, Ref } from 'vue';
 import TodoList from 'src/components/TodoList.vue';
 import { QForm } from 'quasar';
+import { useTaskStore } from 'src/stores/taskStore';
 
 export default defineComponent({
   // name: 'PageName'
@@ -44,37 +39,23 @@ export default defineComponent({
     TodoList,
   },
   setup() {
-    let id = 0;
-    const task: Ref<string | null >= ref(null);
-    const tasks: Todo[] = reactive([]);
+    const taskStore = useTaskStore();
+    const task: Ref<string | null> = ref(null);
     const form = ref<QForm>();
 
-    return {
-      task,
-      tasks,
-      form,
-      onSubmit() {
-        if (task.value) {
-          tasks.push({
-            id: id++,
-            content: task.value,
-            done: false
-          });
-          task.value = null;
-          form.value?.resetValidation();
-        }
-      },
-      deleteTask(id: number) {
-        tasks.splice(tasks.findIndex(
-          (todo) => todo.id === id
-        ), 1)
-      },
-      editTask(task: Todo) {
-        let idx = tasks.findIndex(
-          (t) => t.id === task.id
-        )
-        tasks[idx].content = task.content
+    function onSubmit(): void {
+      if (task.value) {
+        taskStore.addTask(task.value);
+        task.value = null;
+        form.value?.resetValidation();
       }
+    }
+
+    return {
+      taskStore,
+      task,
+      form,
+      onSubmit,
     };
   },
 });
