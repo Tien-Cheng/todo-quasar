@@ -41,7 +41,7 @@
       <q-item-section side>
         <q-checkbox v-model="task.done"></q-checkbox>
       </q-item-section>
-      <q-item-section>{{ task.content }}</q-item-section>
+      <q-item-section class="text-strike">{{ task.content }}</q-item-section>
       <q-item-section side>
         <div class="q-gutter-sm">
           <q-btn
