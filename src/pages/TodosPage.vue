@@ -30,7 +30,7 @@
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue';
 import TodoList from 'src/components/TodoList.vue';
-import { QForm } from 'quasar';
+import { LocalStorage, QForm } from 'quasar';
 import { useTaskStore } from 'src/stores/taskStore';
 
 export default defineComponent({
@@ -40,6 +40,14 @@ export default defineComponent({
   },
   setup() {
     const taskStore = useTaskStore();
+    taskStore.$subscribe(
+      () => {
+        LocalStorage.set('tasks', taskStore.tasks);
+      },
+      {
+        detached: true,
+      }
+    );
     const task: Ref<string | null> = ref(null);
     const form = ref<QForm>();
 
